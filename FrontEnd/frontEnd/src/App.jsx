@@ -7,6 +7,11 @@ import ProductDetail from "./pages/ProductDetail";
 import Footer from "./components/Footer";
 import Products from "./pages/Products";
 import Cart from "./pages/Cart";
+import PlaceOrder from "./pages/PlaceOrder";
+import Order from "./pages/Order";
+import Login from "./pages/Login";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
 
 export default function App() {
   return (
@@ -17,7 +22,11 @@ export default function App() {
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/products" element={<Products />} />
         <Route path="/cart" element={<Cart />} />
-
+        <Route path="/place-order" element={<PlaceOrder />} />
+        <Route path="/Order" element={<Order />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
       </Routes>
       <Footer />
     </div>

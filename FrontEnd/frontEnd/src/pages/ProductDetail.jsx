@@ -1,11 +1,12 @@
 import React, { useContext } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { ProductsContext } from '../context/ProductsContext.js'
+import { CartContext } from '../context/CartContext.js'
 
 function ProductDetail() {
   const { id } = useParams()
   const { products } = useContext(ProductsContext)
-  
+  const { addToCart } = useContext(CartContext)
   // Get product by array index
   const product = products[parseInt(id)]
   
@@ -74,7 +75,7 @@ function ProductDetail() {
               </div>
 
               <div className="space-y-4">
-                <button className="w-full bg-gray-900 text-white py-3 px-6 rounded-lg font-semibold hover:bg-black transition-colors">
+                <button onClick={() => addToCart(product, parseInt(id))} className="w-full bg-gray-900 text-white py-3 px-6 rounded-lg font-semibold hover:bg-black transition-colors">
                   Add to Cart
                 </button>
               </div>

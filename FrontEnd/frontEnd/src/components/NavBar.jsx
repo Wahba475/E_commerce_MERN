@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import Logo from "../assets/Logo.png";
 import { NavLink, Link } from "react-router-dom";
 import search from "../assets/searchIcon.png";
 import profile from "../assets/profile.png";
 import Cart from "../assets/cart.png";
+import { CartContext } from "../context/CartContext.js";
 function NavBar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { getTotalQuantity } = useContext(CartContext);
   let hoverTimeout;
   const handleMouseEnter = () => {
     clearTimeout(hoverTimeout);
@@ -106,20 +108,21 @@ function NavBar() {
             className="w-8 h-8 cursor-pointer hover:opacity-80 transition-opacity"
           />
           <p className="absolute -bottom-1 -right-1 bg-black text-white text-[10px] font-semibold rounded-full w-5 h-5 flex items-center justify-center shadow-md">
-           3
+           {getTotalQuantity()}
+           {console.log(getTotalQuantity())}
           </p>
         </NavLink>
 
         {/* Profile Dropdown */}
         <div className="relative">
-          <img
+        <Link to="/login" > <img
             src={profile}
             alt="profile"
             className="w-8 h-8 cursor-pointer hover:opacity-80 transition-opacity"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
           />
-
+</Link>
           {isDropdownOpen && (
             <div
               className="absolute top-full right-0 mt-2 w-44 bg-white shadow-xl rounded-lg border border-gray-200 py-2 z-50"
