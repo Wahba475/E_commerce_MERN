@@ -1,10 +1,11 @@
-import React, { useContext, useState, useMemo } from "react";
+import React, { useContext, useState, useMemo, useEffect } from "react";
 import { ProductsContext } from "../context/ProductsContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 function Products() {
   const { products } = useContext(ProductsContext);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 15;
@@ -13,6 +14,14 @@ function Products() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [sortBy, setSortBy] = useState("featured");
 
+  // Handle URL parameters for category filtering
+  useEffect(() => {
+    const categoryFromUrl = searchParams.get('category');
+    if (categoryFromUrl) {
+      setSelectedCategory(categoryFromUrl);
+    }
+  }, [searchParams]);
+
   
   const categories = useMemo(() => {
     const cats = [...new Set(products.map(p => p.category))].filter(Boolean);
@@ -20,15 +29,27 @@ function Products() {
   }, [products]);
 
   
-  const parsePrice = (priceStr) => {
-    return parseFloat(priceStr.replace(/[^0-9.]/g, "")) || 0;
+  const parsePrice = (price) => {
+    // If price is already a number, return it
+    if (typeof price === 'number') return price;
+    // If price is a string, parse it
+    if (typeof price === 'string') {
+      return parseFloat(price.replace(/[^0-9.]/g, "")) || 0;
+    }
+    return 0;
   };
 
   
-  const parseRating = (ratingText) => {
-    if (!ratingText) return 0;
-    const match = ratingText.match(/(\d+\.?\d*)\s*out\s*of\s*5/);
-    return match ? parseFloat(match[1]) : 0;
+  const parseRating = (rating) => {
+    if (!rating) return 0;
+    // If rating is already a number, return it
+    if (typeof rating === 'number') return rating;
+    // If rating is a string like "4.1 out of 5 stars", extract the number
+    if (typeof rating === 'string') {
+      const match = rating.match(/(\d+\.?\d*)\s*out\s*of\s*5/);
+      return match ? parseFloat(match[1]) : 0;
+    }
+    return 0;
   };
 
   
@@ -64,7 +85,6 @@ function Products() {
   
   const handlePageChange = (page) => {
     setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   
@@ -77,10 +97,10 @@ function Products() {
       <div className="max-w-7xl mx-auto px-8 py-12">
         
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 bg-clip-text text-transparent mb-4">
-            All Products
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            All <span className="text-500">Products</span>
           </h1>
-          <div className="w-24 h-1 bg-gradient-to-r from-gray-300 via-gray-600 to-gray-300 mx-auto rounded-full"></div>
+          <div className="w-24 h-1 bg-gray-700 mx-auto rounded-full"></div>
           <p className="text-gray-600 mt-4 max-w-2xl mx-auto">
             Discover our complete collection of premium electronics
           </p>
@@ -96,7 +116,7 @@ function Products() {
                 onClick={() => setSelectedCategory(category)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                   selectedCategory === category
-                    ? "bg-gray-900 text-white shadow-lg"
+                    ? "bg-gray-700 text-white shadow-lg"
                     : "bg-white text-gray-700 border border-gray-200 hover:border-gray-400 hover:bg-gray-50"
                 }`}
               >
@@ -113,7 +133,7 @@ function Products() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+              className="border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-gray-400 focus:border-gray-400"
             >
               <option value="featured">Featured</option>
               <option value="price-low">Price: Low to High</option>
@@ -132,7 +152,7 @@ function Products() {
             return (
               <div
                 key={productIndex}
-                className="group bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer border border-gray-100"
+                                 className="group bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer border border-gray-100 hover:border-gray-300"
                 onClick={() => navigate(`/product/${productIndex}`)}
               >
                 
@@ -170,7 +190,7 @@ function Products() {
 
                   {/* Price */}
                   <div className="text-lg font-bold text-gray-900">
-                    {product.price}
+                    ${product.price}
                   </div>
                 </div>
               </div>
@@ -188,7 +208,7 @@ function Products() {
               className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                 currentPage === 1
                   ? "text-gray-400 cursor-not-allowed"
-                  : "text-gray-700 hover:bg-gray-100"
+                  : "text-gray-700 hover:bg-gray-50"
               }`}
             >
               Previous
@@ -219,8 +239,8 @@ function Products() {
                   onClick={() => handlePageChange(page)}
                   className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                     isActive
-                      ? "bg-gray-900 text-white"
-                      : "text-gray-700 hover:bg-gray-100"
+                      ? "bg-gray-700 text-white"
+                      : "text-gray-700 hover:bg-gray-50"
                   }`}
                 >
                   {page}
@@ -235,7 +255,7 @@ function Products() {
               className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                 currentPage === totalPages
                   ? "text-gray-400 cursor-not-allowed"
-                  : "text-gray-700 hover:bg-gray-100"
+                  : "text-gray-700 hover:bg-gray-50"
               }`}
             >
               Next

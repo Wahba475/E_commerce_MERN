@@ -1,56 +1,98 @@
 import React, { useState } from 'react'
-import { HiOutlineMail } from 'react-icons/hi'
 
 function NewLetterBox() {
   const [email, setEmail] = useState('')
-  const [submitted, setSubmitted] = useState(false)
+  const [isSubscribed, setIsSubscribed] = useState(false)
 
   const handleSubmit = (e) => {
     e.preventDefault()
     if (email) {
-      setSubmitted(true)
+      setIsSubscribed(true)
+      setTimeout(() => setIsSubscribed(false), 3000)
       setEmail('')
     }
   }
 
   return (
-    <section className="bg-gray-50 py-16">
-      <div className="max-w-3xl mx-auto px-6 text-center">
-        <h2 className="text-3xl font-bold text-gray-900 mb-4">
-          Subscribe & Get 10% Off
+    <section className="relative py-20 bg-gray-50 overflow-hidden">
+      
+      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        {/* Icon */}
+        <div className="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-8">
+          <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+          </svg>
+        </div>
+        
+        {/* Heading */}
+        <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+          Stay in the <span className="text-gray-700">Loop</span>
         </h2>
-        <p className="text-gray-500 mb-8">
-          Join our newsletter and receive a 10% discount code for your first order!
+        
+        {/* Subheading */}
+        <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
+          Be the first to know about exclusive deals, new arrivals, and tech insights. 
+          Join our premium community of tech enthusiasts.
         </p>
 
-        <form 
-          onSubmit={handleSubmit} 
-          className="flex flex-col sm:flex-row justify-center items-center gap-4"
-        >
-          <div className="relative w-full sm:w-auto flex-1">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full sm:w-80 px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
-            <HiOutlineMail className="absolute right-3 top-3 text-gray-400 w-6 h-6" />
+        {/* Benefits */}
+        <div className="flex flex-wrap justify-center gap-6 mb-12">
+          <div className="flex items-center text-gray-600">
+            <svg className="w-5 h-5 text-gray-700 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            Exclusive Deals
           </div>
-          <button 
-            type="submit" 
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold"
-          >
-            Subscribe
-          </button>
+          <div className="flex items-center text-gray-600">
+            <svg className="w-5 h-5 text-gray-700 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            Early Access
+          </div>
+          <div className="flex items-center text-gray-600">
+            <svg className="w-5 h-5 text-gray-700 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            Tech Reviews
+          </div>
+        </div>
+        
+        {/* Newsletter Form */}
+        <form onSubmit={handleSubmit} className="max-w-lg mx-auto">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email address"
+                className="w-full px-6 py-4 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-gray-400"
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={isSubscribed}
+              className="px-8 py-4 bg-gray-700 rounded-lg text-white font-semibold hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSubscribed ? (
+                <span className="flex items-center">
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                  Subscribed!
+                </span>
+              ) : (
+                'Subscribe'
+              )}
+            </button>
+          </div>
         </form>
-
-        {submitted && (
-          <p className="text-green-600 mt-4 font-medium">
-            Thank you! Your 10% discount code has been sent to your email.
-          </p>
-        )}
+        
+        {/* Privacy Note */}
+        <p className="text-sm text-gray-500 mt-6">
+          We respect your privacy. Unsubscribe at any time.
+        </p>
       </div>
     </section>
   )

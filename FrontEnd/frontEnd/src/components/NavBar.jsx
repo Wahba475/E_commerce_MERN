@@ -1,13 +1,19 @@
 import React, { useState, useContext } from "react";
 import Logo from "../assets/Logo.png";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 import search from "../assets/searchIcon.png";
 import profile from "../assets/profile.png";
 import Cart from "../assets/cart.png";
 import { CartContext } from "../context/CartContext.js";
+import { ProductsContext } from "../context/ProductsContext.js";
+import { toast } from "react-toastify";
+
 function NavBar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { getTotalQuantity } = useContext(CartContext);
+  const { token, setToken } = useContext(ProductsContext);
+  const navigate = useNavigate();
   let hoverTimeout;
   const handleMouseEnter = () => {
     clearTimeout(hoverTimeout);
@@ -18,6 +24,20 @@ function NavBar() {
     hoverTimeout = setTimeout(() => {
       setIsDropdownOpen(false);
     }, 200);
+  };
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    setIsDropdownOpen(false);
+    
+    // Add a small delay to show the loading animation
+    await new Promise(resolve => setTimeout(resolve, 800));
+    
+    localStorage.removeItem("token");
+    setToken("");
+    toast.success("Logged out successfully!");
+    navigate("/");
+    setIsLoggingOut(false);
   };
 
   return (
@@ -115,34 +135,70 @@ function NavBar() {
 
         {/* Profile Dropdown */}
         <div className="relative">
-        <Link to="/login" > <img
-            src={profile}
-            alt="profile"
-            className="w-8 h-8 cursor-pointer hover:opacity-80 transition-opacity"
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-          />
-</Link>
-          {isDropdownOpen && (
-            <div
-              className="absolute top-full right-0 mt-2 w-44 bg-white shadow-xl rounded-lg border border-gray-200 py-2 z-50"
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
-            >
-              <div className="flex flex-col">
-                <p className="px-4 py-3 cursor-pointer hover:bg-gray-100 hover:text-gray-900 text-sm font-medium border-b">
-                  My Profile
-                </p>
-                <p className="px-4 py-3 cursor-pointer hover:bg-gray-100 hover:text-gray-900 text-sm font-medium border-b">
-                  Orders
-                </p>
-                <p className="px-4 py-3 cursor-pointer hover:bg-gray-100 hover:text-gray-900 text-sm font-medium">
-                  Logout
-                </p>
-              </div>
-            </div>
+          {token ? (
+            <>
+              <img
+                src={profile}
+                alt="profile"
+                className="w-8 h-8 cursor-pointer hover:opacity-80 transition-opacity"
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+              />
+              {isDropdownOpen && !isLoggingOut && (
+                <div
+                  className="absolute top-full right-0 mt-2 w-44 bg-white shadow-xl rounded-lg border border-gray-200 py-2 z-50"
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  <div className="flex flex-col">
+                    <p className="px-4 py-3 cursor-pointer hover:bg-gray-100 hover:text-gray-900 text-sm font-medium border-b">
+                      My Profile
+                    </p>
+                    <Link to="/Order"> 
+                      <p className="px-4 py-3 cursor-pointer hover:bg-gray-100 hover:text-gray-900 text-sm font-medium border-b">
+                        Orders
+                      </p>
+                    </Link>
+                    <p 
+                      className="px-4 py-3 cursor-pointer hover:bg-gray-100 hover:text-gray-900 text-sm font-medium transition-colors"
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </p>
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            <Link to="/login">
+              <img
+                src={profile}
+                alt="profile"
+                className="w-8 h-8 cursor-pointer hover:opacity-80 transition-opacity"
+              />
+            </Link>
           )}
         </div>
+        
+        {/* Logout Loading Overlay */}
+        {isLoggingOut && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-8 shadow-2xl transform transition-all duration-300 ease-out">
+              <div className="flex flex-col items-center space-y-4">
+                <div className="relative">
+                  <div className="w-12 h-12 border-4 border-gray-200 border-t-gray-600 rounded-full animate-spin"></div>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-6 h-6 bg-gray-600 rounded-full animate-pulse"></div>
+                  </div>
+                </div>
+                <div className="text-center">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-1">Logging out...</h3>
+                  <p className="text-sm text-gray-600">Please wait a moment</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

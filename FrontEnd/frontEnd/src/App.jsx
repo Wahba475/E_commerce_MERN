@@ -12,6 +12,8 @@ import Order from "./pages/Order";
 import Login from "./pages/Login";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function App() {
   return (
@@ -29,6 +31,25 @@ export default function App() {
         <Route path="/contact" element={<Contact />} />
       </Routes>
       <Footer />
+      
+      {/* Global Toast Container */}
+      <ToastContainer
+        position="top-right"
+        autoClose={4000}
+        hideProgressBar={false}
+        newestOnTop={true}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        style={{ zIndex: 9999 }}
+        toastClassName="custom-toast"
+        bodyClassName="custom-toast-body"
+        progressClassName="custom-toast-progress"
+        className="custom-toast-container"
+      />
     </div>
   );
 }

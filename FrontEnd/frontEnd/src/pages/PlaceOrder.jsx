@@ -4,13 +4,36 @@ import { useNavigate } from "react-router-dom"
 
 function PlaceOrder() {
   const { cartData, getTotalQuantity } = useContext(CartContext)
-  const navigate = useNavigate  ()
+  const navigate = useNavigate()
   const [selectedPayment, setSelectedPayment] = useState("mastercard")
+  
+  // Debug logging
+  console.log('PlaceOrder - cartData:', cartData)
+  console.log('PlaceOrder - cartData length:', cartData?.length)
+  
+  // Temporary test - remove this once working
+  if (!cartData) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-4">Loading cart data...</h2>
+          <p className="text-gray-600">If this doesn't change, there's a context issue.</p>
+        </div>
+      </div>
+    )
+  }
 
   // Calculate total price
   const calculateTotal = () => {
+    if (!cartData || cartData.length === 0) return "0.00";
     return cartData.reduce((total, item) => {
-      const price = parseFloat(item.price.replace(/[^0-9.]/g, "")) || 0
+      // Handle both string and numeric prices
+      let price = 0;
+      if (typeof item.price === 'string') {
+        price = parseFloat(item.price.replace(/[^0-9.]/g, "")) || 0;
+      } else if (typeof item.price === 'number') {
+        price = item.price;
+      }
       return total + (price * item.quantity)
     }, 0).toFixed(2)
   }

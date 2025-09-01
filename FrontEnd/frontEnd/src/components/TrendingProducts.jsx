@@ -7,12 +7,30 @@ function TrendingProducts() {
   const { products } = useContext(ProductsContext)
   const navigate = useNavigate()
   
-  // Helper function to parse rating from text and render animated stars
-  const parseRating = (ratingText) => {
-    if (!ratingText) return 0
-    // Extract number from text like "4.1 out of 5 stars"
-    const match = ratingText.match(/(\d+\.?\d*)\s*out\s*of\s*5/)
-    return match ? parseFloat(match[1]) : 0
+  // Add debugging and error handling
+  if (!products || products.length === 0) {
+    return (
+      <section className="py-16 bg-gradient-to-br from-gray-50 via-white to-gray-100">
+        <div className="max-w-7xl mx-auto px-8 text-center">
+          <p>Loading products...</p>
+        </div>
+      </section>
+    )
+  }
+  
+  console.log('TrendingProducts - products:', products.length, 'First product:', products[0])
+  
+  // Helper function to parse rating and render animated stars
+  const parseRating = (rating) => {
+    if (!rating) return 0
+    // If rating is already a number, return it
+    if (typeof rating === 'number') return rating
+    // If rating is a string like "4.1 out of 5 stars", extract the number
+    if (typeof rating === 'string') {
+      const match = rating.match(/(\d+\.?\d*)\s*out\s*of\s*5/)
+      return match ? parseFloat(match[1]) : 0
+    }
+    return 0
   }
 
   const renderAnimatedStars = (ratingText, index) => {
@@ -140,7 +158,7 @@ function TrendingProducts() {
 
                   {/* Price */}
                   <div className="text-2xl font-bold text-gray-900">
-                    {product.price}
+                    ${product.price}
                   </div>
                 </div>
             </div>

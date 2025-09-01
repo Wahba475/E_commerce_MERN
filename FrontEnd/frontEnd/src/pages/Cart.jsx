@@ -25,7 +25,13 @@ function Cart() {
   // Calculate total price
   const calculateTotal = () => {
     return cartData.reduce((total, item) => {
-      const price = parseFloat(item.price.replace(/[^0-9.]/g, "")) || 0
+      // Handle both string and numeric prices
+      let price = 0;
+      if (typeof item.price === 'string') {
+        price = parseFloat(item.price.replace(/[^0-9.]/g, "")) || 0;
+      } else if (typeof item.price === 'number') {
+        price = item.price;
+      }
       return total + (price * item.quantity)
     }, 0).toFixed(2)
   }
@@ -113,7 +119,15 @@ function Cart() {
                           
                           {/* Price */}
                           <div className="text-lg font-semibold text-gray-900">
-                            ${(parseFloat(item.price.replace(/[^0-9.]/g, "")) * item.quantity).toFixed(2)}
+                            ${(() => {
+                              let price = 0;
+                              if (typeof item.price === 'string') {
+                                price = parseFloat(item.price.replace(/[^0-9.]/g, "")) || 0;
+                              } else if (typeof item.price === 'number') {
+                                price = item.price;
+                              }
+                              return (price * item.quantity).toFixed(2);
+                            })()}
                           </div>
                         </div>
 
@@ -156,7 +170,7 @@ function Cart() {
                 <hr className="border-gray-200" />
                 <div className="flex justify-between text-lg font-semibold text-gray-900">
                   <span>Total</span>
-                  <span>${calculateTotal() + 10.00}</span>
+                  <span>${(parseFloat(calculateTotal()) + 10.00).toFixed(2)}</span>
                 </div>
               </div>
 
